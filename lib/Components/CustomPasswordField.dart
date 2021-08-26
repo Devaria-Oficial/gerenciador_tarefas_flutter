@@ -3,12 +3,12 @@ import 'package:gerenciador_tarefas_flutter/Constants/Colors.dart';
 
 class CustomPasswordField extends StatefulWidget {
   final String hintText;
-  final ValueChanged<String>? onChanged;
+  final controller;
 
   const CustomPasswordField({
     Key? key,
     required this.hintText,
-    this.onChanged
+    this.controller
   }) : super(key: key);
 
   @override
@@ -22,7 +22,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
   Widget build(BuildContext context) {
     return TextField(
       obscureText: _obscureText,
-      onChanged: widget.onChanged,
+      controller: widget.controller,
       textAlignVertical: TextAlignVertical.bottom,
       style: TextStyle(color: primaryColor, fontSize: 14),
       decoration: InputDecoration(

@@ -3,6 +3,7 @@ import 'package:gerenciador_tarefas_flutter/Constants/Colors.dart';
 import 'package:gerenciador_tarefas_flutter/Views/Login/LoginView.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:localstorage/localstorage.dart';
 
 import 'Views/Home/HomeView.dart';
 
@@ -29,6 +30,8 @@ void configLoading() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final LocalStorage storage = new LocalStorage('main');
+
     return MaterialApp(
       title: 'Gerenciador de Tarefas',
       theme: ThemeData(
@@ -36,7 +39,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         fontFamily: 'Biennale'
       ),
-      home: LoginView(),
+      home: storage.getItem('usuarioLogado') == null ? LoginView() : HomeView(),
       builder: EasyLoading.init(),
     );
   }

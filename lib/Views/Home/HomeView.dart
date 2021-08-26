@@ -13,6 +13,7 @@ import 'package:gerenciador_tarefas_flutter/Views/Login/LoginView.dart';
 import 'package:intl/intl.dart';
 import 'package:localstorage/localstorage.dart';
 
+import 'Components/AlterarTarefaDialog.dart';
 import 'Components/CustomBox.dart';
 import 'Components/FiltrosDialog.dart';
 import 'Components/NovaTarefaDialog.dart';
@@ -57,7 +58,9 @@ class HomeView extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 1,
       ),
-      body: BodyHomeView(size: size),
+      body: SingleChildScrollView(
+        child: BodyHomeView(size: size),
+      ),
     );
   }
 }
@@ -77,6 +80,8 @@ class BodyHomeView extends StatefulWidget {
 class _BodyHomeViewState extends State<BodyHomeView> {
 
   List<Tarefa> tarefas = List<Tarefa>.empty();
+  var dataPrevistaInicialController = TextEditingController(text: "");
+  var dataPrevistaFinalController = TextEditingController(text: "");
 
   @override
   void initState() {
@@ -89,8 +94,8 @@ class _BodyHomeViewState extends State<BodyHomeView> {
     });
   }
 
-  void listarTarefas() {
-    TarefaService.listar().then((tarefasEncontradas) {
+  void listarTarefas([Map<String, dynamic>? filtros]) {
+    TarefaService.listar(filtros).then((tarefasEncontradas) {
       setState(() {
         tarefas = tarefasEncontradas;
       });
@@ -100,7 +105,7 @@ class _BodyHomeViewState extends State<BodyHomeView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: widget.size.height,
+      height: 510,
       width: widget.size.width,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -111,13 +116,17 @@ class _BodyHomeViewState extends State<BodyHomeView> {
             firstWidget: Text("Tarefas", style: const TextStyle(color: primaryColor, fontSize: 18, fontWeight: FontWeight.w600)),
             secondWidget: IconButton(onPressed: () => showDialog<String>(
               context: context,
-              builder: (BuildContext context) => FiltrosDialog(listarTarefas: listarTarefas),
+              builder: (BuildContext context) => FiltrosDialog(
+                  listarTarefas: listarTarefas,
+                  dataPrevistaInicialController: dataPrevistaInicialController,
+                  dataPrevistaFinalController: dataPrevistaFinalController,
+              ),
             ), icon: ImageIcon(AssetImage('assets/icons/filtro_icon.png'), color: primaryColor),),
             onTap: () { },
           ),
           tarefas.length > 0 ?
           SizedBox(
-            height: 375,
+            height: 365,
             child: ListView.builder(
                 itemCount: tarefas.length,
                 itemBuilder: (context, index) {
@@ -128,7 +137,12 @@ class _BodyHomeViewState extends State<BodyHomeView> {
                         titulo: tarefas[index].nome,
                         estaConcluido: tarefas[index].dataConclusao != null,
                         subtitulo: 'Conclusão em: ${DateFormat('dd/MM/yyyy').format(tarefas[index].dataPrevistaConclusao)}',
-                        onTap: () { }
+                        tarefaId: tarefas[index].id,
+                        listarTarefas: listarTarefas,
+                        onTap: () => showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlterarTarefaDialog(listarTarefas: listarTarefas, tarefaSelecionada: tarefas[index],),
+                        )
                     ),
                   );
                 }

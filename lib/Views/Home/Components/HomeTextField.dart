@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciador_tarefas_flutter/Constants/Colors.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class HomeTextField extends StatelessWidget {
   final String textHint;
-  final ValueChanged<String> onChanged;
+  final controllerTextField;
+  final MaskTextInputFormatter? maskFormatter;
 
   const HomeTextField({
     Key? key,
     required this.textHint,
-    required this.onChanged
+    this.controllerTextField,
+    this.maskFormatter
   }) : super(key: key);
 
   @override
@@ -26,7 +29,8 @@ class HomeTextField extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.only(bottom: 0, left: 16.5, right: 0, top: 0),
           child: TextField(
-            onChanged: onChanged,
+            inputFormatters: maskFormatter != null ? [maskFormatter!] : [],
+            controller: controllerTextField,
             style: TextStyle(color: primaryColor, fontSize: 14),
             decoration: InputDecoration(
                 border: InputBorder.none,

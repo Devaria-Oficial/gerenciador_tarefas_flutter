@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciador_tarefas_flutter/Constants/Colors.dart';
+import 'package:gerenciador_tarefas_flutter/Service/TarefaService.dart';
 
 class CustomItemList extends StatelessWidget {
 
@@ -9,6 +10,8 @@ class CustomItemList extends StatelessWidget {
   final String titulo;
   final String subtitulo;
   final bool estaConcluido;
+  final int? tarefaId;
+  final VoidCallback? listarTarefas;
 
   const CustomItemList({
     Key? key,
@@ -16,7 +19,9 @@ class CustomItemList extends StatelessWidget {
     required this.onTap,
     required this.titulo,
     required this.subtitulo,
-    this.estaConcluido = false
+    this.estaConcluido = false,
+    this.tarefaId,
+    this.listarTarefas
   }) : super(key: key);
 
   @override
@@ -41,9 +46,18 @@ class CustomItemList extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 0, left: 16, right: 16, top: 0),
               child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () { },
-                      icon: estaConcluido ? ImageIcon(AssetImage('assets/icons/check_icon.png'), color: mediumGrayColor) : ImageIcon(AssetImage('assets/icons/circulo_icon.png'), color: mediumGrayColor),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 0, left: 0, right: 16, top: 0),
+                      child: InkResponse(
+                        child: estaConcluido ? Image.asset('assets/icons/check_icon.png') : Image.asset('assets/icons/circulo_icon.png'),
+                        onTap: () {
+                          if(!estaConcluido && tarefaId != null) {
+                            TarefaService.concluir(tarefaId!).then((value) {
+                              listarTarefas!();
+                            });
+                          }
+                        },
+                      ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

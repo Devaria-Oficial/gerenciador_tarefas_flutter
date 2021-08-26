@@ -6,6 +6,8 @@ import 'package:gerenciador_tarefas_flutter/Components/RoundedButton.dart';
 import 'package:gerenciador_tarefas_flutter/Constants/Colors.dart';
 import 'package:gerenciador_tarefas_flutter/Models/Tarefa.dart';
 import 'package:gerenciador_tarefas_flutter/Service/TarefaService.dart';
+import 'package:intl/intl.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'HomeTextField.dart';
 
@@ -22,9 +24,8 @@ class NovaTarefaDialog extends StatefulWidget {
 }
 
 class _NovaTarefaDialogState extends State<NovaTarefaDialog> {
-  String nomeTarefa = "";
-  String dataPrevistaConclusao = "";
-
+  final nomeTarefaController = TextEditingController();
+  final dataConclusaoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +42,10 @@ class _NovaTarefaDialogState extends State<NovaTarefaDialog> {
         ),
         child: Column(
           children: [
-            HomeTextField(textHint: 'Adicionar uma tarefa', onChanged: (value) {
-              setState(() {
-                nomeTarefa = value;
-              });
-            }),
+            HomeTextField(textHint: 'Adicionar uma tarefa', controllerTextField: nomeTarefaController,),
             Padding(
               padding: EdgeInsets.only(bottom: 0, left: 0, right: 0, top: 8),
-              child: HomeTextField(textHint: 'Data de Conclusão', onChanged: (value) {
-                setState(() {
-                  dataPrevistaConclusao = value;
-                });
-              }),
+              child: HomeTextField(textHint: 'Data de Conclusão', controllerTextField: dataConclusaoController, maskFormatter: new MaskTextInputFormatter(mask: '##/##/####', filter: { "#": RegExp(r'[0-9]') }),),
             )
           ],
         ),
@@ -69,7 +62,9 @@ class _NovaTarefaDialogState extends State<NovaTarefaDialog> {
                 onPressed: () {
                   EasyLoading.show(status: 'Carregando...');
 
-                  Tarefa novaTarefa = Tarefa(nome: nomeTarefa, dataPrevistaConclusao: new DateTime(2022, 5, 20));
+                  DateTime dataPrevistaConclusaoDT = DateFormat('dd/MM/yyyy').parse(dataConclusaoController.text);
+
+                  Tarefa novaTarefa = Tarefa(nome: nomeTarefaController.text, dataPrevistaConclusao: dataPrevistaConclusaoDT);
 
                   TarefaService.criar(novaTarefa).then((tarefaCriada) {
                     if(tarefaCriada == null) {
@@ -79,9 +74,9 @@ class _NovaTarefaDialogState extends State<NovaTarefaDialog> {
                       widget.listarTarefas();
                       Navigator.pop(context, 'OK');
                     }
-                  }).catchError((e) {
+                  }).catchError((err) {
                     EasyLoading.dismiss();
-                    EasyLoading.showError("Ocorreu um erro ao processar sua requisição.");
+                    EasyLoading.showError(err['erros'].toString());
                   });
                 },
                 width: 120,

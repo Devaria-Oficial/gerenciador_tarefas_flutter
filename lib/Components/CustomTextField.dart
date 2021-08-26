@@ -4,19 +4,19 @@ import 'package:gerenciador_tarefas_flutter/Constants/Colors.dart';
 class CustomTextField extends StatelessWidget {
   final String textHint;
   final AssetImage assetImage;
-  final ValueChanged<String> onChanged;
+  final controller;
 
   const CustomTextField({
     Key? key,
     required this.textHint,
     required this.assetImage,
-    required this.onChanged
+    this.controller
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: onChanged,
+      controller: controller,
       textAlignVertical: TextAlignVertical.bottom,
       style: TextStyle(color: primaryColor, fontSize: 14),
       decoration: InputDecoration(

@@ -33,6 +33,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   localstorage: ^4.0.0+1
   intl: ^0.17.0
+  mask_text_input_formatter: ^2.0.0
 
 dev_dependencies:
   flutter_test:

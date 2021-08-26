@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:gerenciador_tarefas_flutter/Components/CustomPasswordField.dart';
@@ -10,10 +11,19 @@ import 'package:gerenciador_tarefas_flutter/Views/Home/HomeView.dart';
 import 'package:localstorage/localstorage.dart';
 
 
-class LoginView extends StatelessWidget {
-  var email = "";
-  var senha = "";
+class LoginView extends StatefulWidget {
+  @override
+  _LoginViewState createState() => _LoginViewState();
+}
 
+class _LoginViewState extends State<LoginView> {
+  var emailController = TextEditingController(text: "");
+  var senhaController = TextEditingController(text: "");
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +54,14 @@ class LoginView extends StatelessWidget {
                     child: CustomTextField(
                       textHint: 'E-mail',
                       assetImage: AssetImage("assets/icons/email_icon.png"),
-                      onChanged: (value) { email = value; },
+                      controller: emailController,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 0, left: 52, right: 52, top: 5),
                     child: CustomPasswordField(
                       hintText: 'Senha',
-                      onChanged: (value) { senha = value; },
+                      controller: senhaController,
                     ),
                   ),
                   Padding(
@@ -61,7 +71,7 @@ class LoginView extends StatelessWidget {
                       onPressed: () {
                         EasyLoading.show(status: 'Carregando...');
 
-                        AuthService.login(email, senha).then((usuarioLogado) {
+                        AuthService.login(emailController.text, senhaController.text).then((usuarioLogado) {
                           EasyLoading.dismiss();
 
                           if(usuarioLogado != null) {
